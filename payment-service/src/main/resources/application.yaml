@@ -1,3 +1,10 @@
 spring:
   application:
     name: payment-service
+
+server:
+  port: 4001        # HTTP (Spring Web / REST)
+
+grpc:
+  server:
+    port: 9091      # gRPC server port (avoid 9000-9004 — used by Jupyter kernels)
