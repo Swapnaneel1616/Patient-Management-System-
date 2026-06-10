@@ -5,6 +5,7 @@ import com.pm.patient_service.dto.PatientResponseDTO;
 import com.pm.patient_service.exception.EmailAlreadyExistsException;
 import com.pm.patient_service.exception.PatientNotFound;
 import com.pm.patient_service.grpc.BillingServiceGrpcClient;
+import com.pm.patient_service.kafka.KafkaProducer;
 import com.pm.patient_service.mapper.PatientMapper;
 import com.pm.patient_service.module.Patient;
 import com.pm.patient_service.repository.PatientRepository;
@@ -23,6 +24,8 @@ public class PatientService {
 
     @Autowired
     private BillingServiceGrpcClient billingServiceGrpcClient;
+    @Autowired
+    private KafkaProducer kafkaProducer;
 
 
     public List<PatientResponseDTO> getPatient() {
@@ -37,6 +40,8 @@ public class PatientService {
         }
         Patient newPatient = patientRepository.save(PatientMapper.toModel(patientRequestDTO));
         billingServiceGrpcClient.createBillingAccount(newPatient.getId().toString(), newPatient.getName(), newPatient.getEmail());
+        kafkaProducer.sendEvent(newPatient);
+
         return PatientMapper.toDTO(newPatient);
     }
 
