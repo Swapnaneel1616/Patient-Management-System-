@@ -2,7 +2,8 @@ spring:
   application:
     name: patient-service
 
-  Kafka:
+  kafka:
+    bootstrap-servers: kafka:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
