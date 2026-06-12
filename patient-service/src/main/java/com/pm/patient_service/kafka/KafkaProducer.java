@@ -24,12 +24,14 @@ public class KafkaProducer {
                 .setEventType("PATIENT_CREATED")
                 .build();
 
-        try{
-            kafkaTemplate.send("patient", event.toByteArray());
-        }
-        catch (Exception e){
-            log.error("Error sending PatientCreated Event: {}", event);
-        }
+        kafkaTemplate.send("patient", event.toByteArray())
+                .whenComplete((result, ex) -> {
+                    if (ex != null) {
+                        log.error("Failed to send PatientCreated event to topic 'patient': {}", event, ex);
+                    } else {
+                        log.info("Sent PatientCreated event to topic 'patient': {}", event);
+                    }
+                });
     }
 
 
